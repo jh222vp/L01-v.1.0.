@@ -42,12 +42,13 @@ function getAllCourses($dom, $data, $array)
 				//Hämtar senaste inlägget med namn och rubrik
 				$latestPost = getLatestPost($dom, $item->getAttribute("href"));
 				
-				$urlArray[] = "CourseName " . $item->nodeValue . "--> Link" . $item->getAttribute('href') . "--> CourseCode" . $courseCode. "-->" . $coursePlan . "--> Course Entry Text: " . $courseEntryText . "--> Latest Post: ".$latestPost."<br/>";
+				$urlArray[] = array("CourseName " => $item->nodeValue , "Link" => $item->getAttribute('href') , "CourseCode" => $courseCode, "Kursplan" => $coursePlan , "Course Entry Text:" => $courseEntryText , "Latest Post:" => $latestPost);
 			}
 		}
 	}
-   echo "Antal kurser: ".count($urlArray)." stycken <br/>";
-   echo implode($urlArray);
+   echo "Antal kurser: ".count($urlArray)." stycken";
+   json_encode($urlArray, JSON_PRETTY_PRINT);
+   echo $urlArray;
    require_once('bottom-cache.php');	
    //Kommenterar bort koden under då vi bara ska skrapa första sidan pga webbhotellets begränsning.
    //getNextPage($dom, $data, $urlArray);
@@ -64,7 +65,7 @@ function getCourseEntryText($dom, $courseURL){
         $courseEntryText = $xpath->query('//div[@class="entry-content"]/p/text()')->item(0);
 
         if($courseEntryText != null){
-            return $courseEntryText->textContent;
+            return trim($courseEntryText->textContent);
         }
         else{
             return "No entry text";
@@ -81,7 +82,7 @@ function getCourseCode($dom, $courseURL){
         $courseCode = $xpath->query('//div[@id = "header-wrapper"]/ul/li[last()]/a/text()')->item(0);
 
         if($courseCode != null){
-            return $courseCode->textContent;
+            return trim($courseCode->textContent);
         }
         else{
             return "No course code";
@@ -102,7 +103,7 @@ function getCoursePlan($dom, $courseURL){
 			$href = $coursePlan->parentNode;
 			if($href != null)
 			{
-				return $href->getAttribute("href");
+				return trim($href->getAttribute("href"));
 			}
 			else
 			{
@@ -149,8 +150,8 @@ function getLatestPost($dom, $courseURL)
 
 		if($latestPostHeader != null && $latestPostTime != null)
 		{
-			$latestPostValue = $latestPost->nodeValue;
-			$hej = $latestPostTime->nodeValue;
+			$latestPostValue = trim($latestPost->nodeValue);
+			$hej = trim($latestPostTime->nodeValue);
 			return $latestPostValue.$hej;
 		}
 		else
@@ -161,7 +162,7 @@ function getLatestPost($dom, $courseURL)
 }
 //Tar emot en URL
 function curl_get_request($url){
-    $agent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)';
+    $agent = 'myemail@hotmail.com';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_USERAGENT, $agent);
