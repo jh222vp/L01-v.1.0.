@@ -42,14 +42,15 @@ function getAllCourses($dom, $data, $array)
 				//Hämtar senaste inlägget med namn och rubrik
 				$latestPost = getLatestPost($dom, $item->getAttribute("href"));
 				
-				$urlArray[] = array("CourseName " => $item->nodeValue , "Link" => $item->getAttribute('href') , "CourseCode" => $courseCode, "Kursplan" => $coursePlan , "Course Entry Text:" => $courseEntryText , "Latest Post:" => $latestPost);
+				$urlArray[] = array("CourseName" => $item->nodeValue , "Link" => $item->getAttribute('href') , "CourseCode" => $courseCode, "Kursplan" => $coursePlan , "Course Entry Text:" => $courseEntryText , "Latest Post:" => $latestPost);
 			}
 		}
 	}
-   echo "Antal kurser: ".count($urlArray)." stycken";
-   json_encode($urlArray, JSON_PRETTY_PRINT);
-   echo $urlArray;
-   require_once('bottom-cache.php');	
+   
+   echo json_encode($urlArray, JSON_PRETTY_PRINT);
+   
+   require_once('bottom-cache.php');
+echo "Antal kurser: ".count($urlArray)." stycken";   
    //Kommenterar bort koden under då vi bara ska skrapa första sidan pga webbhotellets begränsning.
    //getNextPage($dom, $data, $urlArray);
 }
